@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../models/user_model.dart';
+import 'login_page.dart'; // 👈 import LoginPage
 
 class DashboardPage extends StatefulWidget {
   final UserModel user;
@@ -27,6 +28,14 @@ class _DashboardPageState extends State<DashboardPage> {
     Icons.settings,
     Icons.logout,
   ];
+
+  // ✅ Logout function
+  void _logout(BuildContext context) {
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(builder: (context) => const LoginPage()),
+    );
+  }
 
   // Dynamic greeting function
   String getGreeting(String name) {
@@ -65,7 +74,7 @@ class _DashboardPageState extends State<DashboardPage> {
           ),
           IconButton(
             icon: const Icon(Icons.logout, color: Colors.white),
-            onPressed: () {},
+            onPressed: () => _logout(context), // 👈 Logout from top bar
           ),
         ],
       ),
@@ -140,7 +149,7 @@ class _DashboardPageState extends State<DashboardPage> {
                               });
 
                               if (_menuTitles[index] == "Logout") {
-                                Navigator.pop(context); // Handle logout
+                                _logout(context); // 👈 Proper logout
                               }
                             },
                           ),

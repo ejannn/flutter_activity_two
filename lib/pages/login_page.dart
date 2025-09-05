@@ -12,34 +12,73 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
-  final _fullNameController = TextEditingController();
-  final _ageController = TextEditingController();
 
   final _formKey = GlobalKey<FormState>();
   bool _obscurePassword = true;
+
+  // 🔹 Local users (email, password, fullName, age)
+  final List<Map<String, dynamic>> _users = [
+    {
+      "email": "bonna@example.com",
+      "password": "1234",
+      "fullName": "Bonna Mae Pitogo",
+      "age": 23,
+    },
+    {
+      "email": "beth@example.com",
+      "password": "5678",
+      "fullName": "Mary Beth Gracia",
+      "age": 21,
+    },
+    {
+      "email": "nieljhon@example.com",
+      "password": "nieljhon1",
+      "fullName": "Niel Jhon Celocia",
+      "age": 22,
+    },
+    {
+      "email": "seth@example.com",
+      "password": "seth1234",
+      "fullName": "Seth Sitjar",
+      "age": 23,
+    },
+  ];
 
   @override
   void dispose() {
     _emailController.dispose();
     _passwordController.dispose();
-    _fullNameController.dispose();
-    _ageController.dispose();
     super.dispose();
   }
 
   void _login() {
     if (_formKey.currentState!.validate()) {
-      final user = UserModel(
-        email: _emailController.text,
-        username: _emailController.text.split('@')[0],
-        fullName: _fullNameController.text,
-        age: int.tryParse(_ageController.text) ?? 0,
+      final email = _emailController.text.trim();
+      final password = _passwordController.text.trim();
+
+      // Check if email+password matches one of the users
+      final userData = _users.firstWhere(
+        (user) => user["email"] == email && user["password"] == password,
+        orElse: () => {},
       );
 
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) => DashboardPage(user: user)),
-      );
+      if (userData.isNotEmpty) {
+        final user = UserModel(
+          email: userData["email"],
+          username: userData["email"].split('@')[0],
+          fullName: userData["fullName"],
+          age: userData["age"],
+        );
+
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => DashboardPage(user: user)),
+        );
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text("Invalid email or password")),
+        );
+      }
     }
   }
 
@@ -100,55 +139,17 @@ class _LoginPageState extends State<LoginPage> {
 
                       const SizedBox(height: 24),
 
-                      // Full Name field
-                      TextFormField(
-                        controller: _fullNameController,
-                        decoration: const InputDecoration(
-                          labelText: 'Full Name',
-                          prefixIcon: Icon(Icons.badge),
-                          border: OutlineInputBorder(),
-                        ),
-                        validator: (value) {
-                          if (value == null || value.trim().isEmpty) {
-                            return "Please enter your full name";
-                          }
-                          return null;
-                        },
-                      ),
-                      const SizedBox(height: 16),
-
-                      // Age field
-                      TextFormField(
-                        controller: _ageController,
-                        keyboardType: TextInputType.number,
-                        decoration: const InputDecoration(
-                          labelText: 'Age',
-                          prefixIcon: Icon(Icons.calendar_today),
-                          border: OutlineInputBorder(),
-                        ),
-                        validator: (value) {
-                          if (value == null || value.trim().isEmpty) {
-                            return "Please enter your age";
-                          }
-                          if (int.tryParse(value) == null) {
-                            return "Please enter a valid number";
-                          }
-                          return null;
-                        },
-                      ),
-                      const SizedBox(height: 16),
-
-                      // Email/Username field
+                      // Email field
                       TextFormField(
                         controller: _emailController,
                         decoration: const InputDecoration(
-                          labelText: 'Email or Username',
+                          labelText: 'Email',
                           prefixIcon: Icon(Icons.person),
                           border: OutlineInputBorder(),
                         ),
                         validator: (value) {
                           if (value == null || value.trim().isEmpty) {
-                            return "Please enter your email or username";
+                            return "Please enter your email";
                           }
                           return null;
                         },
