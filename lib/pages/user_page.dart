@@ -43,7 +43,7 @@ class _UserPageState extends State<UserPage> {
   Widget build(BuildContext context) {
     return Row(
       children: [
-        // LEFT: Form
+        // leftt
         Expanded(
           child: Container(
             margin: const EdgeInsets.all(16),
@@ -94,7 +94,7 @@ class _UserPageState extends State<UserPage> {
           ),
         ),
 
-        // RIGHT: Widget showing updated details
+        // roihghtt
         Expanded(
           child: Container(
             margin: const EdgeInsets.all(16),
