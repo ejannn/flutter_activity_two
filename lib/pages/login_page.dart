@@ -37,11 +37,18 @@ class _LoginPageState extends State<LoginPage> {
       "age": 22,
     },
     {
+      "email": "ivory@example.com",
+      "password": "ivory1",
+      "fullName": "Richter Ivory Millanas",
+      "age": 23,
+    },
+    {
       "email": "seth@example.com",
       "password": "seth1234",
       "fullName": "Seth Sitjar",
       "age": 23,
     },
+
   ];
 
   @override
@@ -56,7 +63,7 @@ class _LoginPageState extends State<LoginPage> {
       final email = _emailController.text.trim();
       final password = _passwordController.text.trim();
 
-      // Check if email+password matches one of the users
+      // Check if email and sd password matches one of the users
       final userData = _users.firstWhere(
         (user) => user["email"] == email && user["password"] == password,
         orElse: () => {},
@@ -88,7 +95,7 @@ class _LoginPageState extends State<LoginPage> {
       // 🔹 Top NavBar
       appBar: AppBar(
         title: const Text(
-          "Login Page",
+          "Welcome to Flutter!",
           style: TextStyle(
             fontWeight: FontWeight.bold,
             fontSize: 22,
