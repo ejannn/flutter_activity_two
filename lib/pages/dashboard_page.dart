@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../models/user_model.dart';
-import 'login_page.dart'; // 👈 import LoginPage
+import 'login_page.dart';
+import 'user_page.dart';
 
 class DashboardPage extends StatefulWidget {
   final UserModel user;
@@ -13,23 +14,21 @@ class DashboardPage extends StatefulWidget {
 
 class _DashboardPageState extends State<DashboardPage> {
   int _selectedIndex = 0;
-  int _hoveredIndex = -1; // Track hovered menu item
+  int _hoveredIndex = -1;
 
-  // Sidebar items
   final List<String> _menuTitles = [
     "Dashboard",
     "Profile",
-    "Settings",
+    "Users",
     "Logout",
   ];
   final List<IconData> _menuIcons = [
     Icons.dashboard,
     Icons.person,
-    Icons.settings,
+    Icons.people,
     Icons.logout,
   ];
 
-  // ✅ Logout function
   void _logout(BuildContext context) {
     Navigator.pushReplacement(
       context,
@@ -37,7 +36,6 @@ class _DashboardPageState extends State<DashboardPage> {
     );
   }
 
-  // Dynamic greeting function
   String getGreeting(String name) {
     final hour = DateTime.now().hour;
     if (hour < 12) {
@@ -49,10 +47,74 @@ class _DashboardPageState extends State<DashboardPage> {
     }
   }
 
+  // Choose which page to shoe in dasbord
+ Widget _getPageContent() {
+  switch (_selectedIndex) {
+    case 0: // dashboard
+      return _buildDashboardContent();
+    case 1: // profle
+      return _buildDashboardContent();
+        
+    case 2: // userss
+      return UserPage(user: widget.user); 
+
+    default:
+      return const SizedBox.shrink();
+  }
+}
+
+
+  // Extract gret
+  Widget _buildDashboardContent() {
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        double screenWidth = constraints.maxWidth;
+        double containerWidth =
+            screenWidth < 400 ? screenWidth * 0.9 : screenWidth < 800 ? 400 : 600;
+
+        return AnimatedContainer(
+          duration: const Duration(milliseconds: 500),
+          curve: Curves.easeInOut,
+          width: containerWidth,
+          padding: const EdgeInsets.all(24.0),
+          decoration: BoxDecoration(
+            color: const Color(0xFFBBDEFB),
+            borderRadius: BorderRadius.circular(20),
+            boxShadow: [
+              BoxShadow(
+                color: const Color(0xFF90CAF9).withOpacity(0.6),
+                blurRadius: 15,
+                offset: const Offset(0, 8),
+              ),
+            ],
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const Icon(Icons.account_circle, size: 90, color: Color(0xFF1565C0)),
+              const SizedBox(height: 20),
+
+              //gret
+
+              Text(
+                "${getGreeting(widget.user.fullName)}\n",
+                style: const TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.w600,
+                  color: Colors.black87,
+                ),
+                textAlign: TextAlign.center,
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // Top NavBar
       appBar: AppBar(
         title: const Text(
           'Dashboard',
@@ -62,53 +124,42 @@ class _DashboardPageState extends State<DashboardPage> {
             color: Colors.white,
           ),
         ),
-        backgroundColor: const Color(0xFF1565C0), // 🔹 Deep Blue
+        backgroundColor: const Color(0xFF1565C0),
         actions: [
-          IconButton(
-            icon: const Icon(Icons.search, color: Colors.white),
-            onPressed: () {},
-          ),
-          IconButton(
-            icon: const Icon(Icons.notifications, color: Colors.white),
-            onPressed: () {},
-          ),
+          IconButton(icon: const Icon(Icons.search, color: Colors.white), onPressed: () {}),
+          IconButton(icon: const Icon(Icons.notifications, color: Colors.white), onPressed: () {}),
           IconButton(
             icon: const Icon(Icons.logout, color: Colors.white),
-            onPressed: () => _logout(context), // 👈 Logout from top bar
+            onPressed: () => _logout(context),
           ),
         ],
       ),
 
       body: Row(
         children: [
-          // Sidebar
+          // Sidechickssaa
           Container(
             width: 250,
-            color: const Color(0xFF1565C0), // 🔹 Deep Blue
+            color: const Color(0xFF1565C0),
             child: Column(
               children: [
                 UserAccountsDrawerHeader(
                   accountName: Text(
                     widget.user.fullName,
-                    style: const TextStyle(
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white,
-                    ),
+                    style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
                   ),
                   accountEmail: Text(
-                    "Age: ${widget.user.age} | ${widget.user.email}",
+                    widget.user.email,
                     style: const TextStyle(color: Colors.white),
                   ),
                   currentAccountPicture: const CircleAvatar(
                     backgroundColor: Colors.white,
                     child: Icon(Icons.person, size: 40, color: Colors.blue),
                   ),
-                  decoration: const BoxDecoration(
-                    color: Color(0xFF1565C0), // 🔹 Deep Blue
-                  ),
+                  decoration: const BoxDecoration(color: Color(0xFF1565C0)),
                 ),
 
-                // Sidebar menu list with hover effect
+                // Sidebar listss
                 Expanded(
                   child: ListView.builder(
                     itemCount: _menuTitles.length,
@@ -121,12 +172,10 @@ class _DashboardPageState extends State<DashboardPage> {
                         onExit: (_) => setState(() => _hoveredIndex = -1),
                         child: AnimatedContainer(
                           duration: const Duration(milliseconds: 200),
-                          color:
-                              isSelected
-                                  ? const Color(0xFFBBDEFB) // Selected color
-                                  : isHovered
-                                  ? Colors
-                                      .white24 // Hover effect
+                          color: isSelected
+                              ? const Color(0xFFBBDEFB)
+                              : isHovered
+                                  ? Colors.white24
                                   : Colors.transparent,
                           child: ListTile(
                             leading: Icon(
@@ -137,19 +186,13 @@ class _DashboardPageState extends State<DashboardPage> {
                               _menuTitles[index],
                               style: TextStyle(
                                 color: isSelected ? Colors.black : Colors.white,
-                                fontWeight:
-                                    isSelected
-                                        ? FontWeight.bold
-                                        : FontWeight.normal,
+                                fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
                               ),
                             ),
                             onTap: () {
-                              setState(() {
-                                _selectedIndex = index;
-                              });
-
+                              setState(() => _selectedIndex = index);
                               if (_menuTitles[index] == "Logout") {
-                                _logout(context); // 👈 Proper logout
+                                _logout(context);
                               }
                             },
                           ),
@@ -162,67 +205,13 @@ class _DashboardPageState extends State<DashboardPage> {
             ),
           ),
 
-          // Main Content
+          // Main Continent
           Expanded(
             child: Container(
               width: double.infinity,
               height: double.infinity,
-              color: const Color(0xFFE3F2FD), // Background
-              child: Center(
-                child: LayoutBuilder(
-                  builder: (context, constraints) {
-                    double screenWidth = constraints.maxWidth;
-                    double containerWidth =
-                        screenWidth < 400
-                            ? screenWidth * 0.9
-                            : screenWidth < 800
-                            ? 400
-                            : 600;
-
-                    return AnimatedContainer(
-                      duration: const Duration(milliseconds: 500),
-                      curve: Curves.easeInOut,
-                      width: containerWidth,
-                      padding: const EdgeInsets.all(24.0),
-                      decoration: BoxDecoration(
-                        color: const Color(0xFFBBDEFB), // Card background
-                        borderRadius: BorderRadius.circular(20),
-                        boxShadow: [
-                          BoxShadow(
-                            color: const Color(
-                              0xFF90CAF9,
-                            ).withOpacity(0.6), // Card shadow
-                            blurRadius: 15,
-                            offset: const Offset(0, 8),
-                          ),
-                        ],
-                      ),
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          const Icon(
-                            Icons.account_circle,
-                            size: 90,
-                            color: Color(0xFF1565C0),
-                          ),
-                          const SizedBox(height: 20),
-
-                          // 👇 Only Dynamic Greeting here
-                          Text(
-                            getGreeting(widget.user.fullName),
-                            style: const TextStyle(
-                              fontSize: 20,
-                              fontWeight: FontWeight.w600,
-                              color: Colors.black87,
-                            ),
-                            textAlign: TextAlign.center,
-                          ),
-                        ],
-                      ),
-                    );
-                  },
-                ),
-              ),
+              color: const Color(0xFFE3F2FD),
+              child: Center(child: _getPageContent()),
             ),
           ),
         ],
